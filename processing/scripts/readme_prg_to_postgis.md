@@ -5,7 +5,7 @@
 1.  **Uruchom serwer PostgreSQL z PostGISem:**
 
     ```bash
-    docker run --name "postgis" --shm-size=4g -e MAINTAINANCE_WORK_MEM=512MB -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DBNAME=gis -d -t postgis/postgis
+    docker run --name "postgis" --shm-size=4g -e MAINTAINANCE_WORK_MEM=512MB -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DBNAME=postgres -d -t postgis/postgis
     ```
 
 2.  **Uruchom skrypt do pobrania danych z PRG do bazy danych PostGIS:**
