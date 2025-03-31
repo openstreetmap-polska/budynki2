@@ -1,0 +1,6 @@
+# OsmType     Tag             DataType        Flags
+node        addr:housenumber text            linear
+node        addr:street    text            linear
+way         addr:housenumber text            linear
+way         addr:street    text            linear
+

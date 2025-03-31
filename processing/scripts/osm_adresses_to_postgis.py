@@ -1,3 +1,4 @@
+from pathlib import Path
 import requests
 import subprocess
 import click
@@ -13,7 +14,8 @@ import tempfile
 @click.option('--db_name', default="postgres", help='PostGIS database name', type=str)
 @click.option('--db_user', default="postgres", help='PostGIS database user', type=str)
 @click.option('--cache_size', default=2000, help='Cache MB size limit', type=int)
-def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_size):
+@click.option('--style_path', default="adress.style", help='Path to a style file that filters the data to only contain adresses', type=click.Path(exists=True, dir_okay=False, path_type=Path))
+def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_size, style_path):
     """Downloads OSM address data and imports it into PostGIS."""
 
     # Check if the PGPASSWORD environment variable is set
@@ -38,7 +40,7 @@ def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_
         "-U", db_user,
         "-H", db_host,
         "-P", str(db_port),
-        "-s",
+        "-S", str(style_path),
         "-C", str(cache_size),
         temp_file_path,
     ]
