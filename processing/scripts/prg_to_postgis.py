@@ -16,8 +16,8 @@ def import_prg_to_postgis(db_host, db_port, db_name, db_user, db_password, recor
     """
 
     connection_string = f"PG:host={db_host} port={db_port} dbname={db_name} user={db_user} password={db_password}"
-    # full_wfs_url = f"{wfs_url}&STARTINDEX=0&COUNT={record_limit}"
-    full_wfs_url = f"{wfs_url}&BBOX=486671.93941567128058523,637882.46590459416620433,486708.02003817853983492,637916.3392419598530978"
+    full_wfs_url = f"{wfs_url}&STARTINDEX=0&COUNT={record_limit}"
+    # full_wfs_url = f"{wfs_url}&BBOX=486671.93941567128058523,637882.46590459416620433,486708.02003817853983492,637916.3392419598530978"
 
     ogr2ogr_command = [
         "ogr2ogr",
