@@ -1,21 +1,20 @@
-from pathlib import Path
-import requests
 import subprocess
 import click
 import os
 import tempfile
-
-# download address data from a .osm.pdf and save to postgis with osm2pgsql
+from pathlib import Path
+import requests
 
 @click.command()
-@click.option('--osm_url', default="https://download.geofabrik.de/europe/poland/opolskie-latest.osm.pbf", help='OSM address data URL', type=str)
-@click.option('--db_host', default="0.0.0.0", help='PostGIS database host', type=str)
-@click.option('--db_port', default=5432, help='PostGIS database port', type=int)
-@click.option('--db_name', default="postgres", help='PostGIS database name', type=str)
-@click.option('--db_user', default="postgres", help='PostGIS database user', type=str)
-@click.option('--cache_size', default=2000, help='Cache MB size limit', type=int)
-@click.option('--style_path', default="adress.style", help='Path to a style file that filters the data to only contain adresses', type=click.Path(exists=True, dir_okay=False, path_type=Path))
-def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_size, style_path):
+@click.option('--osm_url', default="https://download.geofabrik.de/europe/poland/opolskie-latest.osm.pbf", help='URL to a .osm.pbf file', type=str, show_default=True)
+@click.option('--db_host', default="0.0.0.0", help='PostGIS database host', type=str, show_default=True)
+@click.option('--db_port', default=5432, help='PostGIS database port', type=int, show_default=True)
+@click.option('--db_name', default="postgres", help='PostGIS database name', type=str, show_default=True)
+@click.option('--db_user', default="postgres", help='PostGIS database user', type=str, show_default=True)
+@click.option('--proj_srid', default="2180", help='Projection SRID to load the data in', type=str, show_default=True)
+@click.option('--cache_size', default=2000, help='Cache MB size limit', type=int, show_default=True)
+@click.option('--style_path', default="adress.style", help='Path to a style file that filters the data to only contain adresses', type=click.Path(exists=True, dir_okay=False, path_type=Path), show_default=True)
+def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, proj_srid, cache_size, style_path):
     """Downloads OSM address data and imports it into PostGIS."""
 
     # Check if the PGPASSWORD environment variable is set
@@ -33,7 +32,7 @@ def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_
 
     click.echo(click.style(f"Successfully downloaded OSM address data to: {temp_file_path}", fg='green'))
 
-    click.echo(f"Importing OSM address data to PostGIS...")
+    click.echo(f"Importing OSM address data to PostGIS with EPSG:{proj_srid}...")
     osm2pgsql_command = [
         "osm2pgsql",
         "-d", db_name,
@@ -42,6 +41,7 @@ def download_osm_addres_data(osm_url, db_host, db_port, db_name, db_user, cache_
         "-P", str(db_port),
         "-S", str(style_path),
         "-C", str(cache_size),
+        "--proj", proj_srid,
         temp_file_path,
     ]
     try:
