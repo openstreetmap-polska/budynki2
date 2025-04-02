@@ -9,7 +9,7 @@ import requests
 @click.option('--db-name', default="postgres", help='PostGIS database name', show_default=True)
 @click.option('--db-user', default="postgres", help='PostGIS database user', show_default=True)
 @click.option('--db-password', default="1234", help='PostGIS database password', show_default=True)
-@click.option('--record-limit', default=100000, help='Number of records to import', show_default=True, type=int)
+@click.option('--record-limit', default=1000, help='Number of records to import', show_default=True, type=int)
 @click.option('--record-batch', default=100, help='Number of records to import in a single batch', show_default=True, type=int)
 @click.option('--table-name', default="prg_adresy", help='PostGIS table name', show_default=True)
 @click.option('--wfs-url', default="https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaNumeracjiAdresowej?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=ms:prg-adresy&SRSNAME=urn:ogc:def:crs:EPSG::2180", help='WFS URL', show_default=True)
@@ -39,7 +39,11 @@ def import_prg_to_postgis(db_host, db_port, db_name, db_user, db_password, recor
             connection_string,
             f.name
         ]
-        subprocess.run(ogr2ogr_command, check=True)
+        try:
+            subprocess.run(ogr2ogr_command, check=True)
+            click.echo(click.style(f"Imported {record_limit} records into {db_host}:{db_port}/{db_name}.{table_name}", fg="green"))
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"Error importing data: {str(e)}", fg="red"))
 
 
 if __name__ == "__main__":
